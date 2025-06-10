@@ -7,7 +7,7 @@ module.exports.config = {
   name: "join",
   eventType: ["log:subscribe"],
   version: "1.2.0",
-  credits: "Thanh Nguyên (fix by ChatGPT)",
+  credits: "Thanh Nguyên",
   description: "Gửi thông báo và video khi bot hoặc thành viên được thêm vào nhóm",
 };
 
