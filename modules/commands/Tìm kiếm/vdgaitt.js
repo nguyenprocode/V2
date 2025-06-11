@@ -3,7 +3,7 @@ const fs = require("fs-extra");
 const request = require("request");
 
 module.exports.config = {
-  name: "vdgai",
+  name: "vdgaitt",
   version: "1.0.0",
   hasPermission: 2,
   credits: "tnt", 
