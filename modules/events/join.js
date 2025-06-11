@@ -8,7 +8,7 @@ module.exports.config = {
   eventType: ["log:subscribe"],
   version: "1.2.0",
   credits: "Thanh Nguyên",
-  description: "Gửi thông báo và video khi bot hoặc thành viên được thêm vào nhóm",
+  description: "Gửi thông báo và file MP3 khi bot hoặc thành viên được thêm vào nhóm",
 };
 
 module.exports.run = async function ({ api, event }) {
@@ -19,16 +19,16 @@ module.exports.run = async function ({ api, event }) {
   const isBotAdded = logMessageData.addedParticipants.some(i => i.userFbId === botID);
   const time = moment.tz("Asia/Ho_Chi_Minh").format("HH:mm:ss - DD/MM/YYYY");
 
-  const getMP4Stream = async () => {
+  const getMP3Stream = async () => {
     try {
-      const res = await axios.get("https://apidocs-ten.vercel.app/api/vdanime?apikey=tnguyen001"); // hoặc API mp4 khác
-      if (!res.data?.url || !res.data.url.endsWith(".mp4")) throw new Error("Không lấy được URL video");
+      const res = await axios.get("https://apidocs-ten.vercel.app/api/nhac?apikey=tnguyen001"); // Thay bằng API cung cấp MP3
+      if (!res.data?.url || !res.data.url.endsWith(".mp3")) throw new Error("Không lấy được URL MP3");
 
-      const videoUrl = res.data.url;
-      const filePath = path.join(__dirname, "join_video.mp4");
+      const audioUrl = res.data.url;
+      const filePath = path.join(__dirname, "join_audio.mp3");
 
       const response = await axios({
-        url: videoUrl,
+        url: audioUrl,
         method: "GET",
         responseType: "stream"
       });
@@ -41,7 +41,7 @@ module.exports.run = async function ({ api, event }) {
         writer.on("error", reject);
       });
     } catch (err) {
-      console.error("❌ Lỗi tải video:", err);
+      console.error("❌ Lỗi tải MP3:", err);
       return null;
     }
   };
@@ -70,10 +70,10 @@ module.exports.run = async function ({ api, event }) {
 
       await api.sendMessage(message, threadID);
 
-      const videoStream = await getMP4Stream();
-      if (videoStream) {
-        api.sendMessage({ attachment: videoStream }, threadID, () => {
-          fs.unlinkSync(path.join(__dirname, "join_video.mp4"));
+      const audioStream = await getMP3Stream();
+      if (audioStream) {
+        api.sendMessage({ attachment: audioStream }, threadID, () => {
+          fs.unlinkSync(path.join(__dirname, "join_audio.mp3"));
         });
       }
     } catch (e) {
@@ -107,10 +107,10 @@ module.exports.run = async function ({ api, event }) {
 
     await api.sendMessage({ body: message, mentions }, threadID);
 
-    const videoStream = await getMP4Stream();
-    if (videoStream) {
-      api.sendMessage({ attachment: videoStream }, threadID, () => {
-        fs.unlinkSync(path.join(__dirname, "join_video.mp4"));
+    const audioStream = await getMP3Stream();
+    if (audioStream) {
+      api.sendMessage({ attachment: audioStream }, threadID, () => {
+        fs.unlinkSync(path.join(__dirname, "join_audio.mp3"));
       });
     }
   } catch (err) {
