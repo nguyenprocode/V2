@@ -3,7 +3,7 @@ module.exports.config = {
     eventType: ["log:unsubscribe"],
     version: "1.2.0",
     credits: "Thanh Nguyên",
-    description: "Notify when a member leaves the group with an MP4 from API",
+    description: "Notify when a member leaves the group with an MP3 from API",
     dependencies: {
         "axios": "",
         "moment-timezone": ""
@@ -48,19 +48,19 @@ module.exports.run = async function ({ api, event, Users, Threads }) {
         await api.sendMessage(message, threadID);
 
         const axios = require("axios");
-        // 🔁 Thay đổi API sang trả về video mp4
-        const videoResponse = await axios.get("https://apidocs-ten.vercel.app/api/vdanime?apikey=tnguyen001", {
+        // 🔁 Thay đổi API sang trả về file MP3
+        const audioResponse = await axios.get("https://apidocs-ten.vercel.app/api/nhac?apikey=tnguyen001", {
             responseType: "json"
         });
 
-        const videoUrl = videoResponse.data?.url;
-        if (!videoUrl || !videoUrl.endsWith(".mp4")) {
-            await api.sendMessage("⚠️ Không thể lấy URL MP4 từ API.", threadID);
+        const audioUrl = audioResponse.data?.url;
+        if (!audioUrl || !audioUrl.endsWith(".mp3")) {
+            await api.sendMessage("⚠️ Không thể lấy URL MP3 từ API.", threadID);
             return;
         }
 
-        const videoStream = (await axios.get(videoUrl, { responseType: "stream" })).data;
-        await api.sendMessage({ attachment: videoStream }, threadID);
+        const audioStream = (await axios.get(audioUrl, { responseType: "stream" })).data;
+        await api.sendMessage({ attachment: audioStream }, threadID);
 
     } catch (error) {
         console.error("Error in leavenoti:", error);
